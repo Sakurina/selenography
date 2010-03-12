@@ -1,9 +1,6 @@
-//
-// cycript unit testing framework for MS tweaks
-//
-//
+// selenography - unit testing for iPhone apps/extensions via Cycript
 
-// Include NSLog
+// Include NSLog.
 NSLog_ = dlsym(RTLD_DEFAULT, "NSLog")
 NSLog = function() { var types = 'v', args = [], count = arguments.length; for (var i = 0; i != count; ++i) { types += '@'; args.push(arguments[i]); } new Functor(NSLog_, types).apply(null, args); }
 
@@ -67,17 +64,3 @@ function assertClassExists(name) {
       fail(name + " should exist");
   }
 }
-
-// Unit tests for the unit testing framework; ironic
-//function runSelfTests() {
-  //beginContext("Self-tests");
-  //assertTrue(1 == 1, "1 == 1 should be true");
-  //assertTrue(1 == 2, "1 == 2 should be true (should fail)");
-  //assertTrue(YES, "YES should equate to true");
-  //assertFalse(1 == 2, "1 == 2 should be false");
-  //assertEquals(1, 1, "1 should equal 1");
-  //assertEquals(1, 2, "1 should equal 2 (should fail)");
-  //endContext();
-  //beginContext("Seeing if this got reset");
-  //endContext();
-//}
