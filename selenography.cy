@@ -50,7 +50,7 @@ function assertEquals(something, whatItShouldEqual, desc) {
     else
       fail(desc);
   } catch (err) {
-    fail();
+    fail(desc);
   }
 }
 
@@ -62,5 +62,16 @@ function assertClassExists(name) {
       fail(name + " should exist");
   } catch (err) {
       fail(name + " should exist");
+  }
+}
+
+function assertRespondsToSelector(obj, sel, desc) {
+  try {
+    if ([obj respondsToSelector:(new Selector(sel))])
+      pass();
+    else
+      fail(desc);
+  } catch (err) {
+    fail(desc);
   }
 }

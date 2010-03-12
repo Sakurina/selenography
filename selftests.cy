@@ -18,6 +18,8 @@ assertTrue(YES, "YES should equate to true");
 assertFalse(1 == 2, "1 == 2 should be false");
 assertEquals(1, 1, "1 should equal 1");
 assertEquals(1, 2, "1 should equal 2 (should fail)");
+assertRespondsToSelector([new NSString init], "length", "Strings should respond to the length message");
+assertRespondsToSelector([new NSString init], "length:forLulz:", "Strings should respond to the length:forLulz: message (should fail)");
 endContext();
 
 beginContext("Seeing if this got reset");
