@@ -11,16 +11,15 @@ function include(fn) {
 // Include selenography directly; no test runner needed since we're testing ourselves.
 include("selenography.cy");
 
-beginContext("Self-tests");
-assertTrue(1 == 1, "1 == 1 should be true");
-assertTrue(1 == 2, "1 == 2 should be true (should fail)");
-assertTrue(YES, "YES should equate to true");
-assertFalse(1 == 2, "1 == 2 should be false");
-assertEquals(1, 1, "1 should equal 1");
-assertEquals(1, 2, "1 should equal 2 (should fail)");
-assertRespondsToSelector([new NSString init], "length", "Strings should respond to the length message");
-assertRespondsToSelector([new NSString init], "length:forLulz:", "Strings should respond to the length:forLulz: message (should fail)");
-endContext();
+context("Self-tests", function() {
+  assertTrue(1 == 1, "1 == 1 should be true");
+  assertTrue(1 == 2, "1 == 2 should be true (should fail)");
+  assertTrue(YES, "YES should equate to true");
+  assertFalse(1 == 2, "1 == 2 should be false");
+  assertEquals(1, 1, "1 should equal 1");
+  assertEquals(1, 2, "1 should equal 2 (should fail)");
+  assertRespondsToSelector([new NSString init], "length", "Strings should respond to the length message");
+  assertRespondsToSelector([new NSString init], "length:forLulz:", "Strings should respond to the length:forLulz: message (should fail)");
+});
 
-beginContext("Seeing if this got reset");
-endContext();
+context("Seeing if multiple contexts work", function() { });

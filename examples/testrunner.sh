@@ -16,5 +16,5 @@ cycript -p SpringBoard ../selenography.cy
 ./example.cy
 
 # cat out the test results.
-cat /tmp/Tests_Example.log
-cat /tmp/Tests_Second\ Context.log
+cat /tmp/Tests_Example\ 1.log
+cat /tmp/Tests_Example\ 2.log

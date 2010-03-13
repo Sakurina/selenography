@@ -25,6 +25,12 @@ function endContext() {
   contextBuffer = "";
 }
 
+function context(name, scope) {
+  beginContext(name);
+  scope();
+  endContext();
+}
+
 function pass() {
   passes++;
 }
