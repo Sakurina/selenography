@@ -54,17 +54,6 @@ function assertEquals(something, whatItShouldEqual, desc) {
   }
 }
 
-function assertClassExists(name) {
-  try {
-    if (objc_getClass(name) != nil)
-      pass();
-    else
-      fail(name + " should exist");
-  } catch (err) {
-      fail(name + " should exist");
-  }
-}
-
 function assertRespondsToSelector(obj, sel, desc) {
   try {
     if ([obj respondsToSelector:(new Selector(sel))])
