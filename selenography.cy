@@ -41,32 +41,42 @@ function fail(desc) {
   contextBuffer += "  * [FAILED] " + desc + "\n";
 }
 
+// => ASSERTIONS
+// Now all based on the assertBlock helper,
+// mostly stolen from JSUnitTest.
+
+function assertBlock(block, desc) {
+  try {
+    block() ? pass() : fail(desc);
+  } catch (e) { fail(desc) }
+}
+
+// Stuff that would work in plain-old JS.
 function assertTrue(t, desc) {
-  assertEquals(t, true, desc);
+  assertBlock(function() { return t == true; }, desc);
 }
 
 function assertFalse(t, desc) {
-  assertEquals(t, false, desc);
+  assertBlock(function() { return t == false; }, desc);
 }
 
 function assertEquals(something, whatItShouldEqual, desc) {
-  try {
-    if (something == whatItShouldEqual)
-      pass();
-    else
-      fail(desc);
-  } catch (err) {
-    fail(desc);
-  }
+  assertBlock(function() { return something == whatItShouldEqual; }, desc);
 }
 
+function assertNotEquals(something, whatItShouldEqual, desc) {
+  assertBlock(function() { return something != whatItShouldEqual; }, desc);
+}
+
+// Obj-C/Cycript-specific assertions.
 function assertRespondsToSelector(obj, sel, desc) {
-  try {
-    if ([obj respondsToSelector:(new Selector(sel))])
-      pass();
-    else
-      fail(desc);
-  } catch (err) {
-    fail(desc);
-  }
+  assertBlock(function() { return [obj respondsToSelector:(new Selector(sel))]; }, desc);
+}
+
+function assertIsKindOfClass(obj, className, desc) {
+  assertBlock(function() { return [obj isKindOfClass:(objc_getClass(className))]; }, desc);
+}
+
+function assertNotKindOfClass(obj, className, desc) {
+  assertBlock(function() { return ![obj isKindOfClass:objc_getClass(className)]; }, desc);
 }

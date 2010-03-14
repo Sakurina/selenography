@@ -17,9 +17,16 @@ context("Self-tests", function() {
   assertTrue(YES, "YES should equate to true");
   assertFalse(1 == 2, "1 == 2 should be false");
   assertEquals(1, 1, "1 should equal 1");
+  assertNotEquals(1, 2, "1 should not equal 2");
   assertEquals(1, 2, "1 should equal 2 (should fail)");
+  assertNotEquals(1, 1, "1 should not equal 1 (should fail)");
   assertRespondsToSelector([new NSString init], "length", "Strings should respond to the length message");
   assertRespondsToSelector([new NSString init], "length:forLulz:", "Strings should respond to the length:forLulz: message (should fail)");
+  assertIsKindOfClass([new NSString init], "NSString", "Strings should be an instance of NSString or one of its subclasses");
+  assertIsKindOfClass([new NSMutableString init], "NSString", "Mutable strings should be an instance of NSString or one of its subclasses");
+  assertIsKindOfClass([new NSMutableString init], "NSMutableString", "Mutable strings should be an instance of NSMutableString or one of its subclasses");
+  assertIsKindOfClass([new NSMutableString init], "NSNumber", "Mutable strings should be an instance of NSNumber or one of its subclasses (should fail)");
+  assertNotKindOfClass([new NSMutableString init], "NSNumber", "Mutable strings should not be an instance of NSNumber or one of its subclasses");
 });
 
 context("Seeing if multiple contexts work", function() { });
