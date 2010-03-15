@@ -27,6 +27,16 @@ context("Self-tests", function() {
   assertIsKindOfClass([new NSMutableString init], "NSMutableString", "Mutable strings should be an instance of NSMutableString or one of its subclasses");
   assertIsKindOfClass([new NSMutableString init], "NSNumber", "Mutable strings should be an instance of NSNumber or one of its subclasses (should fail)");
   assertNotKindOfClass([new NSMutableString init], "NSNumber", "Mutable strings should not be an instance of NSNumber or one of its subclasses");
+  assertRunsFasterThan(function() {
+    var h = [new NSMutableArray init];
+    var f = [new NSString init];
+    [h addObject:f];
+  }, 3, 100, "Initializing an array and adding a new string to it should be faster than 3 ms on average");
+  assertAlwaysRunsFasterThan(function() {
+    var h = [new NSMutableArray init];
+    var f = [new NSString init];
+    [h addObject:f];
+  }, 5, 100, "Initializing an array and adding a new string to it should always be faster than 5 ms");
 });
 
 context("Seeing if multiple contexts work", function() { });

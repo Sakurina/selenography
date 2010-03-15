@@ -6,29 +6,49 @@ NSLog = function() { var types = 'v', args = [], count = arguments.length; for (
 
 var passes = 0;
 var fails = 0;
-var contextName = ""
-var contextBuffer = ""
 
-function beginContext(context) {
-  contextName = context
-  NSLog("Running tests for context '%@'...", contextName);
-  contextBuffer = "Running tests for context '"+contextName+"'...\n";
+// => LOGGERS
+// Lets you output test results in various ways
+var NSLogLogger = new function InternalNSLogLogger() {
+  this.log = function(str) { NSLog(str); }
+  this.terminate = function(c) {}
 }
 
-function endContext() {
-  NSLog("%@ assertions passed, %@ assertions failed", passes, fails);
-  contextBuffer += "" + passes + " assertions passed, " + fails + " assertions failed\n\n";
-  [contextBuffer writeToFile:"/tmp/Tests_"+contextName+".log" atomically:NO];
-  passes = 0;
-  fails = 0;
-  contextName = "";
-  contextBuffer = "";
+var FileLogger = new function InternalFileLogger() {
+  this.buffer = [new NSString init];
+  this.log = function(str) { this.buffer += str + "\n"; }
+  this.terminate = function(c) {
+    [this.buffer writeToFile:"/tmp/Tests_"+c+".log" atomically:YES];
+    this.buffer = [new NSString init];
+  }
+}
+
+var CombinedLogger = new function InternalCombinedLogger() {
+  this.log = function(str) {
+    FileLogger.log(str);
+    NSLogLogger.log(str);
+  }
+  this.terminate = function(c) { FileLogger.terminate(c); }
+}
+
+// Default logger: combination of saving to a file in /tmp and logging to NSLog
+var desiredLogger = CombinedLogger;
+
+// => CONTEXTS
+function beginContext(context) {
+  desiredLogger.log("Running tests for context '"+context+"'...");
+}
+
+function endContext(context) {
+  desiredLogger.log("" + passes + " assertions passed, " + fails + " assertions failed");
+  desiredLogger.terminate(context);
+  passes = 0; fails = 0;
 }
 
 function context(name, scope) {
   beginContext(name);
   scope();
-  endContext();
+  endContext(name);
 }
 
 function pass() {
@@ -37,13 +57,11 @@ function pass() {
 
 function fail(desc) {
   fails++;
-  NSLog("  * [FAILED] %@", desc);
-  contextBuffer += "  * [FAILED] " + desc + "\n";
+  desiredLogger.log("  * [FAILED] " + desc);
 }
 
 // => ASSERTIONS
-// Now all based on the assertBlock helper,
-// mostly stolen from JSUnitTest.
+// Now all based on the assertBlock helper, mostly stolen from JSUnitTest.
 
 function assertBlock(block, desc) {
   try {
@@ -79,4 +97,33 @@ function assertIsKindOfClass(obj, className, desc) {
 
 function assertNotKindOfClass(obj, className, desc) {
   assertBlock(function() { return ![obj isKindOfClass:objc_getClass(className)]; }, desc);
+}
+
+// => BENCHMARKS
+// JS date objects are known to be up to 15ms off. Take that into consideration.
+
+function assertRunsFasterThan(block, ms, iterations, desc) {
+  // "On average, $block() runs faster than $ms milliseconds over $iterations iterations"
+  var sum = 0;
+  for (var i = 1; i <= iterations; i++) {
+    var start = new Date();
+    block();
+    var end = new Date();
+    sum += end - start;
+  }
+  assertBlock(function() { return (sum / iterations) < ms; }, desc);
+}
+
+function assertAlwaysRunsFasterThan(block, ms, iterations, desc) {
+  // "Over $iterations iterations, $block() always ran faster than $ms milliseconds"
+  assertBlock(function() {
+      for (var i=1; i<= iterations; i++) {
+        var start = new Date();
+        block();
+        var end = new Date();
+        var delta = end - start;
+        if (delta >= ms) return false;
+      }
+      return true;
+  }, desc);
 }
